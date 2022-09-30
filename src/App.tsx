@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import styled from 'styled-components';
+import Header from './components/Header';
+import { useAppDispatch } from './hooks/redux';
+import Converter from './pages/Converter';
+import ExchangeRates from './pages/ExchangeRates';
+import { fetchRates } from './store/slices/rates';
 
-function App() {
+const Main = styled.main`
+  width: ${({ theme }) => theme.containerWidth};
+  margin: 70px auto 0 auto;
+`;
+
+const Page = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const App = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchRates());
+  }, []);
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Header />
+      <Main>
+        <Page>
+          <Routes>
+            <Route path="/" element={<Converter />} />
+            <Route path="/converter" element={<ExchangeRates />} />
+            <Route path="*" element={<p>Not found</p>} />
+          </Routes>
+        </Page>
+      </Main>
+    </>
   );
-}
+};
 
 export default App;
